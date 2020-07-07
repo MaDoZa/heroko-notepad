@@ -1,6 +1,7 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from os import environ
+import json
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DATABASE_URL') or "sqlite:///notepad.sqlite"
@@ -27,8 +28,17 @@ def tasks():
             "description": task. description
         }
         data.append(item)
-        
+
     return jsonify(data)
+
+@app.route('/task', methods=('POST',))
+def add_task():
+    data = json.loads(request.data)
+
+    task = Task(description=data['task'])
+    db.session.add(task)
+    db.session.commit()
+    return data
 
 if __name__ == '__main__':
     app.run(debug=True)
