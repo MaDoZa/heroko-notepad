@@ -1,3 +1,17 @@
+function addTask(task) {
+    var data ={
+      task: task,
+    };
+      
+    d3.json("/task", {
+        method: "POST",
+        body: JSON.stringify(data),
+    }).then(() => {
+        fetchTask();
+    });
+}
+
+
 function deleteTask(id) {
     console.log(id);
     delete_url = '/task/' + id
@@ -10,7 +24,8 @@ function deleteTask(id) {
 
 
 function fetchTask() {
-  d3.json("/tasks").then((tasks) => {
+    console.log("fetch tasks was called")
+    d3.json("/tasks").then((tasks) => {
     var list = d3.select("#tasks");
     list.html("");
     
@@ -30,16 +45,10 @@ function fetchTask() {
 fetchTask();
 
 d3.select("#add-new-task").on("click", () =>{
-  var input = d3.select("#new-task");
-  var value = input.property("value");
-  var data ={
-      task: value,
-  };
-
-  d3.json("/task", {
-      method: "POST",
-      body: JSON.stringify(data),
-  }).then(() => {
-      fetchTask();
-  });
+    var input = d3.select("#new-task");
+    var value = input.property("value");
+    input.property("value", "");
+    addTask(value);
 });
+
+setInterval(() => fetchTask(), 5000)
