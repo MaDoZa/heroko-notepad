@@ -1,3 +1,14 @@
+function deleteTask(id) {
+    console.log(id);
+    delete_url = '/task/' + id
+    d3.json(delete_url , {
+      method: "DELETE",
+    }).then(() => {
+        fetchTask();
+    });
+}
+
+
 function fetchTask() {
   d3.json("/tasks").then((tasks) => {
     var list = d3.select("#tasks");
@@ -7,6 +18,11 @@ function fetchTask() {
         var item = list.append("li");
         item.classed("list-group-item", true);
         item.text(task.description);
+
+        var button = item.append("button");
+        button.classed("btn btn-danger float-right del-btn", true);
+        button.text("Remove");
+        button.on("click", () => deleteTask(task.id));
     });
   });
 }
